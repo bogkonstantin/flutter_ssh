@@ -3,14 +3,14 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'ssh'
-  s.version          = '0.0.7'
+  s.version          = '1.0.0'
   s.summary          = 'SSH and SFTP client for Flutter.'
   s.description      = <<-DESC
 SSH and SFTP client for Flutter. Wraps iOS library NMSSH and Android library Jsch.
                        DESC
-  s.homepage         = 'https://github.com/shaqian/flutter_ssh'
+  s.homepage         = 'https://github.com/bogkonstantin/flutter_ssh'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Qian Sha' => 'https://github.com/shaqian' }
+  s.author           = { 'Konstantin Bogomolov' => 'https://github.com/bogkonstantin' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'

@@ -105,64 +105,6 @@ pFkz72+8eA2cnbWUqHt9WqMUgUBYZTMESzQrTf7+q+0gWf49AZJ/QQ==
     }
   }
 
-  Future<void> onClickSFTP() async {
-    var client = new SSHClient(
-      host: "my.sshtest",
-      port: 22,
-      username: "sha",
-      passwordOrKey: "Password01.",
-    );
-
-    try {
-      String result = await client.connect();
-      if (result == "session_connected") {
-        result = await client.connectSFTP();
-        if (result == "sftp_connected") {
-          var array = await client.sftpLs();
-          setState(() {
-            _result = result;
-            _array = array;
-          });
-
-          print(await client.sftpMkdir("testsftp"));
-          print(await client.sftpRename(
-            oldPath: "testsftp",
-            newPath: "testsftprename",
-          ));
-          print(await client.sftpRmdir("testsftprename"));
-
-          Directory tempDir = await getTemporaryDirectory();
-          String tempPath = tempDir.path;
-          var filePath = await client.sftpDownload(
-            path: "testupload",
-            toPath: tempPath,
-            callback: (progress) async {
-              print(progress);
-              // if (progress == 20) await client.sftpCancelDownload();
-            },
-          );
-
-          print(await client.sftpRm("testupload"));
-
-          print(await client.sftpUpload(
-            path: filePath,
-            toPath: ".",
-            callback: (progress) async {
-              print(progress);
-              // if (progress == 30) await client.sftpCancelUpload();
-            },
-          ));
-
-          print(await client.disconnectSFTP());
-
-          client.disconnect();
-        }
-      }
-    } on PlatformException catch (e) {
-      print('Error: ${e.code}\nError Message: ${e.message}');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     Widget renderButtons() {
@@ -170,29 +112,19 @@ pFkz72+8eA2cnbWUqHt9WqMUgUBYZTMESzQrTf7+q+0gWf49AZJ/QQ==
         padding: EdgeInsets.all(5.0),
         child: ButtonBar(
           children: <Widget>[
-            FlatButton(
+            ElevatedButton(
+              onPressed: onClickCmd,
               child: Text(
                 'Test command',
                 style: TextStyle(color: Colors.white),
               ),
-              onPressed: onClickCmd,
-              color: Colors.blue,
             ),
-            FlatButton(
+            ElevatedButton(
+              onPressed: onClickShell,
               child: Text(
                 'Test shell',
                 style: TextStyle(color: Colors.white),
               ),
-              onPressed: onClickShell,
-              color: Colors.blue,
-            ),
-            FlatButton(
-              child: Text(
-                'Test SFTP',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: onClickSFTP,
-              color: Colors.blue,
             ),
           ],
         ),

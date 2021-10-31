@@ -77,14 +77,10 @@ class SSHClient {
     });
     return result;
   }
-  
+
   Future<String> portForwardL(int rport, int lport, String rhost) async {
-    var result = await _channel.invokeMethod('portForwardL', {
-      "id": id,
-      "rhost": rhost,
-      "rport": rport,
-      "lport": lport
-    });
+    var result = await _channel.invokeMethod('portForwardL',
+        {"id": id, "rhost": rhost, "rport": rport, "lport": lport});
     return result;
   }
 
@@ -115,105 +111,6 @@ class SSHClient {
     });
   }
 
-  Future<String> connectSFTP() async {
-    var result = await _channel.invokeMethod('connectSFTP', {
-      "id": id,
-    });
-    return result;
-  }
-
-  Future<List> sftpLs([String path = '.']) async {
-    var result = await _channel.invokeMethod('sftpLs', {
-      "id": id,
-      "path": path,
-    });
-    return result;
-  }
-
-  Future<String> sftpRename({
-    @required String oldPath,
-    @required String newPath,
-  }) async {
-    var result = await _channel.invokeMethod('sftpRename', {
-      "id": id,
-      "oldPath": oldPath,
-      "newPath": newPath,
-    });
-    return result;
-  }
-
-  Future<String> sftpMkdir(String path) async {
-    var result = await _channel.invokeMethod('sftpMkdir', {
-      "id": id,
-      "path": path,
-    });
-    return result;
-  }
-
-  Future<String> sftpRm(String path) async {
-    var result = await _channel.invokeMethod('sftpRm', {
-      "id": id,
-      "path": path,
-    });
-    return result;
-  }
-
-  Future<String> sftpRmdir(String path) async {
-    var result = await _channel.invokeMethod('sftpRmdir', {
-      "id": id,
-      "path": path,
-    });
-    return result;
-  }
-
-  Future<String> sftpDownload({
-    @required String path,
-    @required String toPath,
-    Callback callback,
-  }) async {
-    downloadCallback = callback;
-    var result = await _channel.invokeMethod('sftpDownload', {
-      "id": id,
-      "path": path,
-      "toPath": toPath,
-    });
-    return result;
-  }
-
-  Future sftpCancelDownload() async {
-    await _channel.invokeMethod('sftpCancelDownload', {
-      "id": id,
-    });
-  }
-
-  Future<String> sftpUpload({
-    @required String path,
-    @required String toPath,
-    Callback callback,
-  }) async {
-    uploadCallback = callback;
-    var result = await _channel.invokeMethod('sftpUpload', {
-      "id": id,
-      "path": path,
-      "toPath": toPath,
-    });
-    return result;
-  }
-
-  Future sftpCancelUpload() async {
-    await _channel.invokeMethod('sftpCancelUpload', {
-      "id": id,
-    });
-  }
-
-  Future disconnectSFTP() async {
-    uploadCallback = null;
-    downloadCallback = null;
-    await _channel.invokeMethod('disconnectSFTP', {
-      "id": id,
-    });
-  }
-
   disconnect() {
     shellCallback = null;
     uploadCallback = null;
@@ -223,11 +120,14 @@ class SSHClient {
       "id": id,
     });
   }
-  
-   Future<bool> isConnected() async {
+
+  Future<bool> isConnected() async {
     bool connected = false; // default to false
-    var result =  await _channel.invokeMethod('isConnected', {"id": id,});
-    if (result == "true") { // results returns a string, therefor we need to check the string 'true'
+    var result = await _channel.invokeMethod('isConnected', {
+      "id": id,
+    });
+    if (result == "true") {
+      // results returns a string, therefor we need to check the string 'true'
       connected = true;
     }
     return connected;

@@ -1,10 +1,17 @@
 # ssh
 
-SSH and SFTP client for Flutter. Wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).
+SSH and SFTP client for Flutter. Wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) (not tested) and Android library [JSch](http://www.jcraft.com/jsch/).
+Based on [ssh](https://github.com/shaqian/flutter_ssh) plugin. Updated to new Android plugins API
 
 ## Installation
 
-Add `ssh` as a [dependency in your pubspec.yaml file](https://flutter.io/using-packages/).
+Add `ssh` as a [dependency in your pubspec.yaml file](https://flutter.io/using-packages/).  
+```
+dependencies:
+  ssh:
+    git:
+      url: git@github.com:bogkonstantin/flutter_ssh.git
+```
 
 ## Known issue
 
@@ -105,75 +112,3 @@ await client.writeToShell("ls\n");
 ```dart
 await client.closeShell();
 ```
-
-### SFTP
-
-#### Connect SFTP:
-```dart
-await client.connectSFTP();
-```
-
-#### List directory: 
-```dart
-var array = await client.sftpLs("/home"); // defaults to .
-```
-
-#### Create directory: 
-```dart
-await client.sftpMkdir("testdir");
-```
-
-#### Rename file or directory: 
-```dart
-await client.sftpRename(
-  oldPath: "testfile",
-  newPath: "newtestfile",
-);
-```
-
-#### Remove directory: 
-```dart
-await client.sftpRmdir("testdir");
-```
-
-#### Remove file: 
-```dart
-await client.sftpRm("testfile");
-```
-
-#### Download file: 
-```dart
-var filePath = await client.sftpDownload(
-  path: "testfile",
-  toPath: tempPath,
-  callback: (progress) {
-    print(progress); // read download progress
-  },
-);
-
-// Cancel download:
-await client.sftpCancelDownload();
-```
-
-#### Upload file: 
-```dart
-await client.sftpUpload(
-  path: filePath,
-  toPath: ".",
-  callback: (progress) {
-    print(progress); // read upload progress
-  },
-);
-
-// Cancel upload:
-await client.sftpCancelUpload();
-```
-
-#### Close SFTP: 
-```dart
-await client.disconnectSFTP();
-```
-
-## Demo
-
-Refer to the [example](https://github.com/shaqian/flutter_ssh/tree/master/example).
