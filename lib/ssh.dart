@@ -3,21 +3,11 @@ import 'package:meta/meta.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
-const MethodChannel _channel = const MethodChannel('ssh');
-const EventChannel _eventChannel = const EventChannel('shell_sftp');
-Stream<dynamic> _onStateChanged;
-
-Stream<dynamic> get onStateChanged {
-  if (_onStateChanged == null) {
-    _onStateChanged =
-        _eventChannel.receiveBroadcastStream().map((dynamic event) => event);
-  }
-  return _onStateChanged;
-}
-
 typedef void Callback(dynamic result);
 
 class SSHClient {
+  MethodChannel _channel = const MethodChannel('ssh');
+
   String id;
   String host;
   int port;
@@ -37,26 +27,6 @@ class SSHClient {
   }) {
     var uuid = new Uuid();
     id = uuid.v4();
-    stateSubscription = onStateChanged.listen((dynamic result) {
-      _parseOutput(result);
-    });
-  }
-
-  _parseOutput(dynamic result) {
-    switch (result["name"]) {
-      case "Shell":
-        if (shellCallback != null && result["key"] == id)
-          shellCallback(result["value"]);
-        break;
-      case "DownloadProgress":
-        if (downloadCallback != null && result["key"] == id)
-          downloadCallback(result["value"]);
-        break;
-      case "UploadProgress":
-        if (uploadCallback != null && result["key"] == id)
-          uploadCallback(result["value"]);
-        break;
-    }
   }
 
   Future<String> connect() async {
