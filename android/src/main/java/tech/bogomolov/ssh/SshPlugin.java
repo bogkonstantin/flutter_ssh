@@ -63,6 +63,8 @@ public class SshPlugin implements FlutterPlugin, MethodCallHandler, EventChannel
             closeShell((HashMap) call.arguments);
         } else if (call.method.equals("isConnected")) {
             isConnected((HashMap) call.arguments, result);
+        } else if (call.method.equals("disconnect")) {
+            disconnect((HashMap) call.arguments, result);
         } else {
             result.notImplemented();
         }
@@ -158,8 +160,6 @@ public class SshPlugin implements FlutterPlugin, MethodCallHandler, EventChannel
         BufferedReader _bufferedReader;
         DataOutputStream _dataOutputStream;
         Channel _channel = null;
-        Boolean _downloadContinue = false;
-        Boolean _uploadContinue = false;
     }
 
     private static final String LOGTAG = "SshPlugin";
@@ -229,6 +229,25 @@ public class SshPlugin implements FlutterPlugin, MethodCallHandler, EventChannel
                 } catch (Exception error) {
                     Log.e(LOGTAG, "Connection failed: " + error.getMessage());
                     result.error("connection_failure", error.getMessage(), null);
+                }
+            }
+        }).start();
+    }
+
+    private void disconnect(final HashMap args, final Result result) {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    SSHClient client = getClient(args.get("id").toString(), result);
+                    if (client == null)
+                        return;
+
+                    Session session = client._session;
+                    session.disconnect();
+                    result.success("disconnected");
+                } catch (Exception error) {
+                    Log.e(LOGTAG, "Error executing command: " + error.getMessage());
+                    result.error("execute_failure", error.getMessage(), null);
                 }
             }
         }).start();
