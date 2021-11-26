@@ -13,7 +13,6 @@ class SSHClient {
   int port;
   String username;
   dynamic passwordOrKey;
-  StreamSubscription<dynamic> stateSubscription;
   Callback shellCallback;
   Callback uploadCallback;
   Callback downloadCallback;
@@ -45,6 +44,14 @@ class SSHClient {
       "id": id,
       "cmd": cmd,
     });
+    return result;
+  }
+
+  Future<String> getPortForwardingL() async {
+    var result = await _channel.invokeMethod('getPortForwardingL', {
+      "id": id,
+    });
+
     return result;
   }
 
@@ -85,7 +92,6 @@ class SSHClient {
     shellCallback = null;
     uploadCallback = null;
     downloadCallback = null;
-    stateSubscription.cancel();
     _channel.invokeMethod('disconnect', {
       "id": id,
     });

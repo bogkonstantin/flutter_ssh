@@ -65,6 +65,8 @@ public class SshPlugin implements FlutterPlugin, MethodCallHandler, EventChannel
             isConnected((HashMap) call.arguments, result);
         } else if (call.method.equals("disconnect")) {
             disconnect((HashMap) call.arguments, result);
+        } else if(call.method.equals("getPortForwardingL")) {
+            getPortForwardingL((HashMap) call.arguments, result);
         } else {
             result.notImplemented();
         }
@@ -229,6 +231,25 @@ public class SshPlugin implements FlutterPlugin, MethodCallHandler, EventChannel
                 } catch (Exception error) {
                     Log.e(LOGTAG, "Connection failed: " + error.getMessage());
                     result.error("connection_failure", error.getMessage(), null);
+                }
+            }
+        }).start();
+    }
+
+    private void getPortForwardingL(final HashMap args, final Result result) {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    SSHClient client = getClient(args.get("id").toString(), result);
+                    if (client == null)
+                        return;
+
+                    Session session = client._session;
+                    String[] portForwardingL = session.getPortForwardingL();
+                    result.success(String.join(":", portForwardingL));
+                } catch (Exception error) {
+                    Log.e(LOGTAG, "Error getting port forwarding: " + error.getMessage());
+                    result.error("execute_failure", error.getMessage(), null);
                 }
             }
         }).start();

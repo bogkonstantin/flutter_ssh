@@ -14,6 +14,34 @@ class _MyAppState extends State<MyApp> {
   String _result = '';
   List _array;
 
+  Future<void> onClickPortForwarding() async {
+    var client = new SSHClient(
+      host: "my.sshtest",
+      port: 22,
+      username: "sha",
+      passwordOrKey: "Password01.",
+    );
+
+    String result = '';
+
+    try {
+      result = await client.connect();
+      if (result == "session_connected") {
+        await client.portForwardL(3306, 3306, 'localhost');
+        client.disconnect();
+      }
+
+    } on PlatformException catch (e) {
+      print('Error: ${e.code}\nError Message: ${e.message}');
+      result = 'Error: ${e.code}\nError Message: ${e.message}';
+    }
+
+    setState(() {
+      _result = result;
+      _array = null;
+    });
+  }
+
   Future<void> onClickCmd() async {
     var client = new SSHClient(
       host: "my.sshtest",
@@ -110,6 +138,13 @@ pFkz72+8eA2cnbWUqHt9WqMUgUBYZTMESzQrTf7+q+0gWf49AZJ/QQ==
         padding: EdgeInsets.all(5.0),
         child: ButtonBar(
           children: <Widget>[
+            ElevatedButton(
+              onPressed: onClickPortForwarding,
+              child: Text(
+                'Test Port ForwardingL',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
             ElevatedButton(
               onPressed: onClickCmd,
               child: Text(
