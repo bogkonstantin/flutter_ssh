@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:meta/meta.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
@@ -8,21 +7,20 @@ typedef void Callback(dynamic result);
 class SSHClient {
   MethodChannel _channel = const MethodChannel('ssh');
 
-  String id;
+  String? id;
   String host;
   int port;
   String username;
   dynamic passwordOrKey;
-  Callback shellCallback;
-  Callback uploadCallback;
-  Callback downloadCallback;
+  Callback? shellCallback;
+  Callback? uploadCallback;
+  Callback? downloadCallback;
 
   SSHClient({
-    @required this.host,
-    @required this.port,
-    @required this.username,
-    @required
-        this.passwordOrKey, // password or {privateKey: value, [publicKey: value, passphrase: value]}
+    required this.host,
+    required this.port,
+    required this.username,
+    required this.passwordOrKey, // password or {privateKey: value, [publicKey: value, passphrase: value]}
   }) {
     var uuid = new Uuid();
     id = uuid.v4();
@@ -63,7 +61,7 @@ class SSHClient {
 
   Future<String> startShell({
     String ptyType = "vanilla", // vanilla, vt100, vt102, vt220, ansi, xterm
-    Callback callback,
+    Callback? callback,
   }) async {
     shellCallback = callback;
     var result = await _channel.invokeMethod('startShell', {
